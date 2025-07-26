@@ -1,17 +1,20 @@
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'auth',
-    pathMatch: 'full'
+    loadComponent: () =>
+      import('./landing-page/landing-page.component').then((m) => m.LandingPageComponent),
   },
   {
-    path: 'auth',
-    loadComponent: () => import('./auth/auth.component').then(m => m.AuthComponent)
+    path: 'auth/login',
+    loadComponent: () =>
+      import('./authentication/login/login.component').then((m) => m.LoginComponent),
   },
   {
-    path: '**',
-    redirectTo: 'auth'
-  }
+    path: 'auth/signup',
+    loadComponent: () =>
+      import('./authentication/signup/signup.component').then((m) => m.SignupComponent),
+  },
 ];
