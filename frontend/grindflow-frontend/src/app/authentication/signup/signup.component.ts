@@ -13,21 +13,24 @@ import { SignupRequest } from '../model/signup-request';
   templateUrl: './signup.component.html',
 })
 export class SignupComponent {
-  signupForm!: SignupRequest;
+  signupForm: SignupRequest = new SignupRequest;
   message = '';
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
-    this.authService.signup(this.signupForm)
-      .subscribe({
-        next: (res) => {
-          this.message = 'Signup successful!';
+    this.authService.signup(this.signupForm).subscribe({
+      next: (response) => {
+        if (response.body && response.body.message) {
+          this.message = response.body.message;
+          // Optionally redirect after success:
           this.router.navigate(['/auth/login']);
-        },
-        error: (err) => {
-          this.message = err.error || 'Signup failed.';
-        },
-      });
+        }
+      },
+      error: (err) => {
+        // Prefer error.error.error (from backend) or fallback
+        this.message = err.error?.error || err.error?.message || 'Signup failed.';
+      }
+    });
   }
 }

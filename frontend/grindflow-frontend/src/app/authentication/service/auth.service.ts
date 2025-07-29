@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SignupRequest } from '../model/signup-request';
 import { LoginRequest } from '../model/login-request';
@@ -10,8 +10,12 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  signup(data: SignupRequest): Observable<any> {
-    return this.http.post(`${this.baseUrl}/signup`, data);
+  signup(data: SignupRequest): Observable<HttpResponse<any>> {
+    return this.http.post<any>(
+      `${this.baseUrl}/signup`,
+      data,
+      { observe: 'response' }
+    );
   }
 
   login(data: LoginRequest): Observable<any> {

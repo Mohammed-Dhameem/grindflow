@@ -12,7 +12,7 @@ import { LoginRequest } from '../model/login-request';
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
-  loginForm !: LoginRequest;
+  loginForm: LoginRequest = new LoginRequest;
   message = '';
 
   constructor(private authService: AuthService, private router: Router) { }

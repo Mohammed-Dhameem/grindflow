@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -30,7 +32,7 @@ public class AuthController {
         if (userRepo.findByEmail(req.getEmail()).isPresent()) {
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
-                    .body("Email is already registered");
+                    .body(Collections.singletonMap("error", "Email is already registered"));
         }
 
         User user = new User();
@@ -39,8 +41,9 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(req.getPassword()));
         userRepo.save(user);
 
-        String token = jwtUtil.generateToken(user.getEmail());
-        return ResponseEntity.ok(new AuthResponse(token));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(Collections.singletonMap("message", "User registered successfully"));
     }
 
     @PostMapping("/login")

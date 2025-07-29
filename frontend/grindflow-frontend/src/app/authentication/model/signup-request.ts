@@ -1,5 +1,5 @@
-export interface SignupRequest {
-    name: string;
-    email: string;
-    password: string;
+export class SignupRequest {
+    name: string = '';
+    email: string = '';
+    password: string = '';
 }
