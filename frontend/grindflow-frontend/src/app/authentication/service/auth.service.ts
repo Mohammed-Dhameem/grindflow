@@ -6,19 +6,19 @@ import { LoginRequest } from '../model/login-request';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private baseUrl = 'http://localhost:8080/api/auth';
+  private baseUrl = 'http://localhost:8080/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   signup(data: SignupRequest): Observable<HttpResponse<any>> {
     return this.http.post<any>(
-      `${this.baseUrl}/signup`,
+      `${this.baseUrl}/auth/signup`,
       data,
       { observe: 'response' }
     );
   }
 
   login(data: LoginRequest): Observable<any> {
-    return this.http.post(`${this.baseUrl}/login`, data);
+    return this.http.post(`${this.baseUrl}/auth/login`, data);
   }
 }

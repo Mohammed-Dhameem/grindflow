@@ -23,12 +23,10 @@ export class SignupComponent {
       next: (response) => {
         if (response.body && response.body.message) {
           this.message = response.body.message;
-          // Optionally redirect after success:
           this.router.navigate(['/auth/login']);
         }
       },
       error: (err) => {
-        // Prefer error.error.error (from backend) or fallback
         this.message = err.error?.error || err.error?.message || 'Signup failed.';
       }
     });
