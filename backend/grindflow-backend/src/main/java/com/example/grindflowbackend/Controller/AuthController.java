@@ -71,4 +71,27 @@ public class AuthController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(Collections.singletonMap("error", "Invalid email or password")));
     }
+
+    @GetMapping("/protected")
+    public ResponseEntity<?> protectedEndpoint(@CookieValue("jwt") String token) {
+        if (jwtUtil.isTokenValid(token)) {
+            String email = jwtUtil.extractEmail(token);
+            return ResponseEntity.ok("Hello " + email);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie("jwt", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // delete cookie
+        cookie.setAttribute("SameSite", "Strict");
+        response.addCookie(cookie);
+        return ResponseEntity.ok(Collections.singletonMap("message", "Logged out"));
+    }
+
+
 }

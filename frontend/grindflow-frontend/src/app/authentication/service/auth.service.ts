@@ -25,4 +25,18 @@ export class AuthService {
       { observe: 'response', withCredentials: true }
     );
   }
+
+  checkLogin(): Observable<any> {
+    return this.http.get(`${AppComponent.api_url}/auth/protected`, {
+      withCredentials: true
+    });
+  }
+
+  logout(): Observable<any> {
+    return this.http.post(`${AppComponent.api_url}/auth/logout`, {}, {
+      withCredentials: true
+    });
+  }
+  
+  
 }
