@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../service/auth.service';
+import { LoginRequest } from '../model/login-request';
 
 @Component({
   selector: 'app-login',
@@ -11,14 +12,13 @@ import { AuthService } from '../service/auth.service';
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
-  email = '';
-  password = '';
+  loginForm !: LoginRequest;
   message = '';
 
   constructor(private authService: AuthService, private router: Router) { }
 
   onSubmit() {
-    this.authService.login({ email: this.email, password: this.password })
+    this.authService.login(this.loginForm)
       .subscribe({
         next: (res) => {
           this.message = 'Login successful!';

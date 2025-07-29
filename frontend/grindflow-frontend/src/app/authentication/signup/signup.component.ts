@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../service/auth.service';
+import { SignupRequest } from '../model/signup-request';
 
 @Component({
   selector: 'app-signup',
@@ -12,15 +13,13 @@ import { AuthService } from '../service/auth.service';
   templateUrl: './signup.component.html',
 })
 export class SignupComponent {
-  name = '';
-  email = '';
-  password = '';
+  signupForm!: SignupRequest;
   message = '';
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
-    this.authService.signup({ name: this.name, email: this.email, password: this.password })
+    this.authService.signup(this.signupForm)
       .subscribe({
         next: (res) => {
           this.message = 'Signup successful!';
