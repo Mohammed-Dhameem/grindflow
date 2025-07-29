@@ -3,16 +3,16 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SignupRequest } from '../model/signup-request';
 import { LoginRequest } from '../model/login-request';
+import { AppComponent } from '../../app.component';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private baseUrl = 'http://localhost:8080/api';
 
   constructor(private http: HttpClient) {}
 
   signup(data: SignupRequest): Observable<HttpResponse<any>> {
     return this.http.post<any>(
-      `${this.baseUrl}/auth/signup`,
+      `${AppComponent.api_url}/auth/signup`,
       data,
       { observe: 'response', withCredentials: true }
     );
@@ -20,7 +20,7 @@ export class AuthService {
 
   login(data: LoginRequest): Observable<HttpResponse<any>> {
     return this.http.post<any>(
-      `${this.baseUrl}/auth/login`,
+      `${AppComponent.api_url}/auth/login`,
       data,
       { observe: 'response', withCredentials: true }
     );
