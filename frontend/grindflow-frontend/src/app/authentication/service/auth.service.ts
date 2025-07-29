@@ -8,17 +8,21 @@ import { LoginRequest } from '../model/login-request';
 export class AuthService {
   private baseUrl = 'http://localhost:8080/api';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   signup(data: SignupRequest): Observable<HttpResponse<any>> {
     return this.http.post<any>(
       `${this.baseUrl}/auth/signup`,
       data,
-      { observe: 'response' }
+      { observe: 'response', withCredentials: true }
     );
   }
 
-  login(data: LoginRequest): Observable<any> {
-    return this.http.post(`${this.baseUrl}/auth/login`, data);
+  login(data: LoginRequest): Observable<HttpResponse<any>> {
+    return this.http.post<any>(
+      `${this.baseUrl}/auth/login`,
+      data,
+      { observe: 'response', withCredentials: true }
+    );
   }
 }

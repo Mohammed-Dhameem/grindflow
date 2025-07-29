@@ -13,7 +13,7 @@ import { SignupRequest } from '../model/signup-request';
   templateUrl: './signup.component.html',
 })
 export class SignupComponent {
-  signupForm: SignupRequest = new SignupRequest;
+  signupForm: SignupRequest = new SignupRequest();
   message = '';
 
   constructor(private authService: AuthService, private router: Router) {}

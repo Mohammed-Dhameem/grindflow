@@ -1,11 +1,12 @@
 package com.example.grindflowbackend.Controller;
 
 import com.example.grindflowbackend.Configuration.JwtUtil;
-import com.example.grindflowbackend.Model.ModelDto.AuthResponse;
 import com.example.grindflowbackend.Model.ModelDto.LoginRequest;
 import com.example.grindflowbackend.Model.ModelDto.SignupRequest;
 import com.example.grindflowbackend.Model.User;
 import com.example.grindflowbackend.Repository.UserRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,20 +48,27 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest req) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest req, HttpServletResponse response) {
         return userRepo.findByEmail(req.getEmail())
                 .map(user -> {
                     if (passwordEncoder.matches(req.getPassword(), user.getPassword())) {
                         String token = jwtUtil.generateToken(user.getEmail());
-                        return ResponseEntity.ok(new AuthResponse(token));
+
+                        Cookie jwtCookie = new Cookie("jwt", token);
+                        jwtCookie.setHttpOnly(true);
+                        jwtCookie.setSecure(true); // Only set to true in production (HTTPS)
+                        jwtCookie.setPath("/");
+                        jwtCookie.setMaxAge(60 * 60 * 24); // 1 day
+                        jwtCookie.setAttribute("SameSite", "Strict");
+                        response.addCookie(jwtCookie);
+
+                        return ResponseEntity.ok(Collections.singletonMap("message", "Login successful"));
                     } else {
-                        return ResponseEntity
-                                .status(HttpStatus.UNAUTHORIZED)
-                                .body("Invalid email or password");
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                .body(Collections.singletonMap("error", "Invalid email or password"));
                     }
                 })
-                .orElseGet(() -> ResponseEntity
-                        .status(HttpStatus.UNAUTHORIZED)
-                        .body("Invalid email or password"));
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Collections.singletonMap("error", "Invalid email or password")));
     }
 }
