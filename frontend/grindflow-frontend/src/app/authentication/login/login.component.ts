@@ -2,10 +2,13 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../service/auth.service';
 import { LoginRequest } from '../model/login-request';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
+  imports: [CommonModule, FormsModule]
 })
 export class LoginComponent {
   loginForm: LoginRequest = new LoginRequest();
@@ -26,7 +29,7 @@ export class LoginComponent {
         this.loading = false;
         if (response.body && response.body.message) {
           this.message = response.body.message;
-          this.router.navigate(['/']); // Redirect to home/dashboard
+          this.router.navigate(['/home']); // Redirect to home/dashboard
         }
       },
       error: (err) => {
