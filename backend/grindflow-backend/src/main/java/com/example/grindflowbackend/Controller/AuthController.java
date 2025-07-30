@@ -8,12 +8,15 @@ import com.example.grindflowbackend.Repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -54,13 +57,15 @@ public class AuthController {
                     if (passwordEncoder.matches(req.getPassword(), user.getPassword())) {
                         String token = jwtUtil.generateToken(user.getEmail());
 
-                        Cookie jwtCookie = new Cookie("jwt", token);
-                        jwtCookie.setHttpOnly(true);
-                        jwtCookie.setSecure(true); // Only set to true in production (HTTPS)
-                        jwtCookie.setPath("/");
-                        jwtCookie.setMaxAge(60 * 60 * 24); // 1 day
-                        jwtCookie.setAttribute("SameSite", "Strict");
-                        response.addCookie(jwtCookie);
+                        ResponseCookie jwtCookie = ResponseCookie.from("jwt", token)
+                                .httpOnly(true)
+                                .secure(false) // ❗Set to true in production (HTTPS only)
+                                .path("/")
+                                .maxAge(60 * 60 * 24) // 1 day
+                                .sameSite("Lax")
+                                .build();
+
+                        response.setHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
 
                         return ResponseEntity.ok(Collections.singletonMap("message", "Login successful"));
                     } else {
@@ -73,12 +78,15 @@ public class AuthController {
     }
 
     @GetMapping("/protected")
-    public ResponseEntity<?> protectedEndpoint(@CookieValue("jwt") String token) {
-        if (jwtUtil.isTokenValid(token)) {
-            String email = jwtUtil.extractEmail(token);
-            return ResponseEntity.ok("Hello " + email);
+    public ResponseEntity<?> protectedEndpoint(@CookieValue(value = "jwt", required = false) String token) {
+        if (token == null || !jwtUtil.isTokenValid(token)) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Invalid or missing token"));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+
+        String email = jwtUtil.extractEmail(token);
+        return ResponseEntity.ok(Map.of("message", "You are authenticated", "email", email));
     }
 
     @PostMapping("/logout")

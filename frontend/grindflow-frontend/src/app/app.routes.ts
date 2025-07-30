@@ -21,6 +21,6 @@ export const routes: Routes = [
     path: 'home',
     loadComponent: () =>
       import('./home-page/home-page.component').then((m) => m.HomePageComponent),
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard], // ✅ Only if token is valid
   }
 ];

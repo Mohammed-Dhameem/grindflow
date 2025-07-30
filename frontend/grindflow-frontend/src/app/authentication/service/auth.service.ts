@@ -8,7 +8,7 @@ import { AppComponent } from '../../app.component';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   signup(data: SignupRequest): Observable<HttpResponse<any>> {
     return this.http.post<any>(
@@ -27,9 +27,13 @@ export class AuthService {
   }
 
   checkLogin(): Observable<any> {
-    return this.http.get(`${AppComponent.api_url}/auth/protected`, {
-      withCredentials: true
-    });
+    return this.http.get(
+      `${AppComponent.api_url}/auth/protected`,
+      {
+        withCredentials: true,
+        observe: 'response'
+      }
+    );
   }
 
   logout(): Observable<any> {
@@ -37,6 +41,5 @@ export class AuthService {
       withCredentials: true
     });
   }
-  
-  
+
 }

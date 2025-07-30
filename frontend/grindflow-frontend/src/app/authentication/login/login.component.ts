@@ -25,13 +25,15 @@ export class LoginComponent {
     this.loading = true;
     this.authService.login(this.loginForm).subscribe({
       next: (response) => {
+        console.log('✅ Login successful', response);
         this.loading = false;
         this.message = response.body?.message || '';
-        this.router.navigate(['/home']); // ✅ Cookie already set
+        this.router.navigate(['/home']); // ✅ Should redirect
       },
       error: (err) => {
+        console.warn('❌ Login failed', err);
         this.loading = false;
-        this.message = err.error?.error || err.error?.message || 'Login failed.';
+        this.message = err.error?.error || 'Login failed.';
       }
     });
   }
@@ -40,7 +42,7 @@ export class LoginComponent {
     this.showPassword = !this.showPassword;
   }
 
-  logout(){
+  logout() {
     this.authService.logout().subscribe(() => this.router.navigate(['/login']));
   }
 

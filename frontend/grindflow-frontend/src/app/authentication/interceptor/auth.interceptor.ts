@@ -3,11 +3,9 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const router = inject(Router);
-
   const modifiedReq = req.clone({
-    withCredentials: true // ✅ always send cookies
+    withCredentials: true
   });
 
-  return next(modifiedReq); // optionally add catchError for global error handling
+  return next(modifiedReq);
 };
