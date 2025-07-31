@@ -1,77 +1,120 @@
-<!-- BRAND HEADER -->
-<header class="site-header">
-    <h1 class="brand-name">GRINDFLOW</h1>
-</header>
+<div class="screenfix">
 
-<div class="container">
-    <div class="auth-box">
-        <!-- Title -->
-        <h2>{{ isLoginView ? 'Login' : 'Sign Up' }}</h2>
-
-        <!-- LOGIN FORM -->
-        <form *ngIf="isLoginView" #loginFormRef="ngForm" (ngSubmit)="onLoginSubmit()" novalidate>
-            <input type="email" name="email" [(ngModel)]="loginForm.email" placeholder="Email" required
-                autocomplete="email" />
-
-            <div class="password-field">
-                <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="loginForm.password"
-                    placeholder="Password" required autocomplete="current-password" />
-                <button type="button" class="toggle-btn" (click)="togglePasswordVisibility()"
-                    [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
-                    <i [ngClass]="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
-                </button>
+    <div class="container">
+        <div class="auth-box" [@fade]>
+            <!-- Welcome (Signup Only) -->
+            <div class="site-header">
+                <h3>Welcome to <span class="brand-highlight">Grindflow</span></h3>
+                <p *ngIf="!isLoginView" class="welcome-sub">Create your account to get started 🚀</p>
             </div>
 
-            <button type="submit" [disabled]="loading">
-                {{ loading ? 'Logging in...' : 'Login' }}
-            </button>
-        </form>
-
-        <!-- SIGNUP FORM -->
-        <form *ngIf="!isLoginView" #signupFormRef="ngForm" (ngSubmit)="onSignupSubmit()" novalidate>
-            <input type="text" name="name" [(ngModel)]="signupForm.name" placeholder="Full Name" required
-                autocomplete="name" />
-            <input type="email" name="email" [(ngModel)]="signupForm.email" placeholder="Email" required
-                autocomplete="email" />
-
-            <div class="password-field">
-                <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="signupForm.password"
-                    placeholder="Password" required autocomplete="new-password" />
-                <button type="button" class="toggle-btn" (click)="togglePasswordVisibility()"
-                    [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
-                    <i [ngClass]="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
-                </button>
+            <!-- Auth Heading -->
+            <div @fade>
+                <h2 *ngIf="isLoginView" > Login </h2>
+                <h2 *ngIf="!isLoginView"> Sign Up </h2>
             </div>
 
-            <button type="submit" [disabled]="loading">
-                {{ loading ? 'Signing up...' : 'Sign Up' }}
-            </button>
-        </form>
+            <!-- Forms Container -->
+            <div class="form-container">
+                <!-- Login Form -->
+                <form *ngIf="isLoginView" #loginFormRef="ngForm" (ngSubmit)="onLoginSubmit(loginFormRef)" novalidate>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Email</mat-label>
+                        <input matInput type="email" name="email" [(ngModel)]="loginForm.email" #loginEmail="ngModel"
+                            required email autocomplete="email" />
+                        <mat-error *ngIf="loginEmail.errors?.['required']">Email is required.</mat-error>
+                        <mat-error *ngIf="loginEmail.errors?.['email']">Enter a valid email.</mat-error>
+                    </mat-form-field>
 
-        <!-- GOOGLE SIGN-IN (Always Rendered) -->
-        <div class="google-section">
-            <div id="google-button" class="google-btn" aria-label="Sign in with Google"></div>
-        </div>
-        
-        <!-- TOGGLE LOGIN/SIGNUP -->
-        <div class="toggle-text">
-            <span>{{ isLoginView ? "Don't have an account?" : "Already have an account?" }}</span>
-            <a role="button" tabindex="0" (click)="toggleView()">
-                {{ isLoginView ? 'Sign up' : 'Login' }}
-            </a>
-        </div>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Password</mat-label>
+                        <input matInput [type]="showPassword ? 'text' : 'password'" name="password"
+                            [(ngModel)]="loginForm.password" #loginPassword="ngModel" required minlength="6"
+                            autocomplete="current-password" />
+                        <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()">
+                            <mat-icon>{{ showPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                        </button>
+                        <mat-error *ngIf="loginPassword.errors?.['required']">Password is required.</mat-error>
+                        <mat-error *ngIf="loginPassword.errors?.['minlength']">Min 6 characters required.</mat-error>
+                    </mat-form-field>
 
-        <!-- ERROR OR SUCCESS MESSAGE -->
-        <p class="message" *ngIf="message">{{ message }}</p>
+                    <button mat-raised-button color="primary" class="full-width" type="submit"
+                        [disabled]="loading || loginFormRef.invalid">
+                        {{ loading ? 'Logging in...' : 'Login' }}
+                    </button>
+                </form>
+
+                <!-- Signup Form -->
+                <form *ngIf="!isLoginView" #signupFormRef="ngForm" (ngSubmit)="onSignupSubmit(signupFormRef)" novalidate>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Full Name</mat-label>
+                        <input matInput type="text" name="name" [(ngModel)]="signupForm.name" #signupName="ngModel"
+                            required minlength="2" autocomplete="name" />
+                        <mat-error *ngIf="signupName.errors?.['required']">Name is required.</mat-error>
+                        <mat-error *ngIf="signupName.errors?.['minlength']">At least 2 characters.</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Email</mat-label>
+                        <input matInput type="email" name="email" [(ngModel)]="signupForm.email" #signupEmail="ngModel"
+                            required email autocomplete="email" />
+                        <mat-error *ngIf="signupEmail.errors?.['required']">Email is required.</mat-error>
+                        <mat-error *ngIf="signupEmail.errors?.['email']">Enter a valid email.</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Password</mat-label>
+                        <input matInput [type]="showPassword ? 'text' : 'password'" name="password"
+                            [(ngModel)]="signupForm.password" #signupPassword="ngModel" required
+                            pattern="^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+                            (ngModelChange)="checkPasswordStrength($event)" autocomplete="new-password" />
+                        <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()">
+                            <mat-icon>{{ showPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                        </button>
+                        <mat-error *ngIf="signupPassword.errors?.['required']">Password is required.</mat-error>
+                        <mat-error *ngIf="signupPassword.errors?.['pattern']">
+                            Must be 8+ chars, 1 uppercase, 1 number & 1 special char.
+                        </mat-error>
+                    </mat-form-field>
+
+                    <!-- Strength Meter -->
+                    <div class="password-strength">
+                        <div class="strength-bar" [ngClass]="passwordStrength"></div>
+                        <span class="strength-label">{{ passwordStrengthLabel }}</span>
+                    </div>
+
+                    <button mat-raised-button color="primary" class="full-width" type="submit"
+                        [disabled]="loading || signupFormRef.invalid || !isPasswordStrongEnough">
+                        {{ loading ? 'Signing up...' : 'Sign Up' }}
+                    </button>
+                </form>
+            </div>
+
+            <!-- Google Sign-in -->
+            <div class="google-section">
+                <div id="googleBtn" class="google-btn"></div>
+            </div>
+
+            <!-- View Toggle -->
+            <div class="toggle-text">
+                <span>{{ isLoginView ? "Don't have an account?" : "Already have an account?" }}</span>
+                <a role="button" tabindex="0" (click)="toggleView()">
+                    {{ isLoginView ? 'Sign up' : 'Login' }}
+                </a>
+            </div>
+
+            <!-- Message -->
+            <p class="message" *ngIf="message">{{ message }}</p>
+        </div>
     </div>
 
-    <!-- EMAIL EXISTS MODAL -->
+    <!-- Email Exists Modal -->
     <ng-template [ngIf]="showEmailExistsModal">
-        <div class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="modal-backdrop">
             <div class="modal-content">
                 <h3>Email already registered</h3>
                 <p>Please log in instead.</p>
-                <button (click)="closeModal()">OK</button>
+                <button mat-raised-button color="primary" (click)="closeModal()">OK</button>
             </div>
         </div>
     </ng-template>

@@ -1,27 +1,36 @@
-import {
-  Component,
-  Inject,
-  OnInit,
-  PLATFORM_ID,
-  AfterViewInit,
-} from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+// login-signup.component.ts
+import { Component, Inject, OnInit, PLATFORM_ID, AfterViewInit } from '@angular/core';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../authentication/service/auth.service';
 import { LoginRequest } from '../authentication/model/login-request';
 import { SignupRequest } from '../authentication/model/signup-request';
 import { environment } from '../authentication/environment/environment';
+import { fade } from '../animations/animations';
 
 declare const google: any;
 
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+  ],
   templateUrl: './landing-page.component.html',
-  styleUrls: ['./landing-page.component.css']
+  styleUrls: ['./landing-page.component.css'],
+  animations: [fade],
 })
+
 export class LandingPageComponent implements OnInit, AfterViewInit {
   isLoginView = true;
   loginForm = new LoginRequest();
@@ -31,6 +40,10 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
   loading = false;
   showEmailExistsModal = false;
 
+  passwordStrength = '';
+  passwordStrengthLabel = '';
+  isPasswordStrongEnough = false;
+
   private isBrowser: boolean;
 
   constructor(
@@ -38,21 +51,20 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    this.isBrowser = isPlatformBrowser(this.platformId);
+    this.isBrowser = isPlatformBrowser(platformId);
   }
 
   ngOnInit(): void {
     if (this.isBrowser) {
       this.authService.checkLogin().subscribe({
         next: () => this.router.navigate(['/home']),
-        error: () => { } // do nothing if not logged in
+        error: () => { }
       });
     }
   }
 
   ngAfterViewInit(): void {
     if (this.isBrowser) {
-      // Slight delay ensures DOM is ready
       setTimeout(() => this.initGoogleLogin(), 50);
     }
   }
@@ -60,8 +72,6 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
   toggleView(): void {
     this.isLoginView = !this.isLoginView;
     this.message = '';
-
-    // Ensure Google button is re-rendered if view toggled
     if (this.isBrowser) {
       setTimeout(() => this.initGoogleLogin(), 50);
     }
@@ -71,7 +81,12 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
     this.showPassword = !this.showPassword;
   }
 
-  onLoginSubmit(): void {
+  onLoginSubmit(form: NgForm): void {
+    if (form.invalid) {
+      this.message = 'Please fill in all the fields.';
+      return;
+    }
+
     this.loading = true;
     this.message = '';
 
@@ -82,7 +97,6 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
       },
       error: ({ status, error }) => {
         this.loading = false;
-
         if (status === 403) {
           this.message = error?.error || 'You have previously logged in using a different platform.';
         } else if (status === 401) {
@@ -94,7 +108,17 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onSignupSubmit(): void {
+  onSignupSubmit(form: NgForm): void {
+    if (!this.isPasswordStrongEnough) {
+      this.message = 'Please choose a stronger password before signing up.';
+      return;
+    }
+
+    if (form.invalid) {
+      this.message = 'Please fill in all the fields.';
+      return;
+    }
+
     this.loading = true;
     this.authService.signup(this.signupForm).subscribe({
       next: () => {
@@ -115,27 +139,29 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
   }
 
   private initGoogleLogin(): void {
-    const el = document.getElementById('google-button');
-
+    const el = document.getElementById('googleBtn');
     if (!el || typeof google === 'undefined' || !google.accounts) {
       setTimeout(() => this.initGoogleLogin(), 100);
       return;
     }
 
-    el.innerHTML = ''; // Clear existing button before rendering again
-
+    el.innerHTML = ''; // clear existing render
     google.accounts.id.initialize({
       client_id: environment.googleClientId,
       callback: this.handleCredentialResponse.bind(this),
     });
 
     google.accounts.id.renderButton(el, {
-      theme: 'outline',
-      size: 'large',
+      theme: "filled_black",
+      size: "large",
+      type: "standard",
+      shape: "pill",
+      logo_alignment: "left"
     });
 
-    google.accounts.id.prompt(); // Optional
+    google.accounts.id.prompt(); // Optional, shows one-tap
   }
+
 
   handleCredentialResponse(response: any): void {
     const idToken = response.credential;
@@ -152,5 +178,33 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
     this.signupForm = new SignupRequest();
     this.showEmailExistsModal = false;
     this.isLoginView = true;
+  }
+
+  checkPasswordStrength(password: string): void {
+    const hasUpper = /[A-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecial = /[@$!%*?&]/.test(password);
+    const lengthValid = password.length >= 8;
+
+    const score = [hasUpper, hasNumber, hasSpecial, lengthValid].filter(Boolean).length;
+
+    if (!lengthValid) {
+      this.passwordStrength = 'weak';
+      this.passwordStrengthLabel = 'Too short';
+    } else if (score <= 1) {
+      this.passwordStrength = 'weak';
+      this.passwordStrengthLabel = 'Very Weak';
+    } else if (score === 2) {
+      this.passwordStrength = 'weak';
+      this.passwordStrengthLabel = 'Weak';
+    } else if (score === 3) {
+      this.passwordStrength = 'medium';
+      this.passwordStrengthLabel = 'Medium';
+    } else if (score === 4) {
+      this.passwordStrength = 'strong';
+      this.passwordStrengthLabel = 'Strong';
+    }
+
+    this.isPasswordStrongEnough = this.passwordStrength === 'strong';
   }
 }
