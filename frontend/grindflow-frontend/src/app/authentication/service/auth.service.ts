@@ -3,7 +3,6 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SignupRequest } from '../model/signup-request';
 import { LoginRequest } from '../model/login-request';
-import { AppComponent } from '../../app.component';
 import { environment } from '../environment/environment';
 
 @Injectable({ providedIn: 'root' })

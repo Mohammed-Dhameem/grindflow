@@ -1,26 +1,25 @@
 import { Routes } from '@angular/router';
+import { LandingPageComponent } from './landing-page/landing-page.component';
+import { HomePageComponent } from './home-page/home-page.component';
 import { AuthGuard } from './authentication/guard/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () =>
-      import('./landing-page/landing-page.component').then((m) => m.LandingPageComponent),
+    redirectTo: '/auth',
+    pathMatch: 'full'
   },
   {
-    path: 'auth/login',
-    loadComponent: () =>
-      import('./authentication/login/login.component').then((m) => m.LoginComponent),
-  },
-  {
-    path: 'auth/signup',
-    loadComponent: () =>
-      import('./authentication/signup/signup.component').then((m) => m.SignupComponent),
+    path: 'auth',
+    component: LandingPageComponent
   },
   {
     path: 'home',
-    loadComponent: () =>
-      import('./home-page/home-page.component').then((m) => m.HomePageComponent),
-    canActivate: [AuthGuard], // ✅ Only if token is valid
+    component: HomePageComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: '**',
+    redirectTo: '/auth'
   }
 ];

@@ -1,0 +1,132 @@
+/* General page styling */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f7f9fc;
+  font-family: Arial, sans-serif;
+}
+
+/* Auth card */
+.auth-box {
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings */
+.auth-box h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Input fields */
+.auth-box input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+/* Submit buttons */
+.auth-box button[type="submit"] {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  transition: background 0.3s;
+}
+
+.auth-box button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+/* Toggle link */
+.toggle-text {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.toggle-text a {
+  color: #007bff;
+  cursor: pointer;
+  margin-left: 4px;
+  text-decoration: underline;
+}
+
+/* Google login button */
+.google-btn {
+  margin: 1rem auto;
+  display: flex;
+  justify-content: center;
+}
+
+/* Message */
+.message {
+  text-align: center;
+  margin-top: 1rem;
+  color: #555;
+}
+
+/* Password field with show/hide toggle */
+.password-field {
+  position: relative;
+}
+
+.toggle-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.75rem;
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+}
+
+/* Modal for duplicate email */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h3 {
+  margin-bottom: 1rem;
+}
+
+.modal-content button {
+  padding: 0.5rem 1.25rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+}

@@ -1,5 +1,70 @@
-<h1>Welcome to GrindFlow</h1>
-<p>Track your progress. Stay consistent. Grow stronger.</p>
+<div class="container">
+    <div class="auth-box">
+        <h2>{{ isLoginView ? 'Login' : 'Sign Up' }}</h2>
 
-<button routerLink="/auth/login">Login</button>
-<button routerLink="/auth/signup">Sign Up</button>
+        <!-- LOGIN FORM -->
+        <form *ngIf="isLoginView" (ngSubmit)="onLoginSubmit()" novalidate>
+            <input type="email" [(ngModel)]="loginForm.email" name="email" placeholder="Email" required
+                autocomplete="email" />
+
+            <div class="password-field">
+                <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="loginForm.password" name="password"
+                    placeholder="Password" required autocomplete="current-password" />
+                <button type="button" (click)="togglePasswordVisibility()" class="toggle-btn">
+                    {{ showPassword ? 'Hide' : 'Show' }}
+                </button>
+            </div>
+
+            <button type="submit" [disabled]="loading">
+                {{ loading ? 'Logging in...' : 'Login' }}
+            </button>
+        </form>
+
+        <!-- SIGNUP FORM -->
+        <form *ngIf="!isLoginView" (ngSubmit)="onSignupSubmit()" novalidate>
+            <input type="text" [(ngModel)]="signupForm.name" name="name" placeholder="Full Name" required
+                autocomplete="name" />
+            <input type="email" [(ngModel)]="signupForm.email" name="email" placeholder="Email" required
+                autocomplete="email" />
+
+            <div class="password-field">
+                <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="signupForm.password" name="password"
+                    placeholder="Password" required autocomplete="new-password" />
+                <button type="button" (click)="togglePasswordVisibility()" class="toggle-btn">
+                    {{ showPassword ? 'Hide' : 'Show' }}
+                </button>
+            </div>
+
+            <button type="submit" [disabled]="loading">
+                {{ loading ? 'Signing up...' : 'Sign Up' }}
+            </button>
+        </form>
+
+        <!-- GOOGLE SIGN-IN BUTTON -->
+        <div class="google-section">
+            <div id="google-button" class="google-btn"></div>
+        </div>
+
+        <!-- TOGGLE BETWEEN LOGIN/SIGNUP -->
+        <div class="toggle-text">
+            <span>
+                {{ isLoginView ? "Don't have an account?" : "Already have an account?" }}
+            </span>
+            <a role="button" tabindex="0" (click)="toggleView()">
+                {{ isLoginView ? 'Sign up' : 'Login' }}
+            </a>
+        </div>
+
+        <!-- FORM ERROR / INFO MESSAGE -->
+        <p class="message" *ngIf="message">{{ message }}</p>
+    </div>
+
+    <!-- MODAL FOR EMAIL ALREADY REGISTERED -->
+    <div class="modal-backdrop" *ngIf="showEmailExistsModal">
+        <div class="modal-content">
+            <h3>Email already registered</h3>
+            <p>Please log in instead.</p>
+            <button (click)="closeModal()">OK</button>
+        </div>
+    </div>
+</div>
