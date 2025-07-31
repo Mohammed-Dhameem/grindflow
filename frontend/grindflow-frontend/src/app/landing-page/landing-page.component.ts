@@ -1,4 +1,10 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  Inject,
+  OnInit,
+  PLATFORM_ID,
+  AfterViewInit,
+} from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,37 +22,49 @@ declare const google: any;
   templateUrl: './landing-page.component.html',
   styleUrls: ['./landing-page.component.css']
 })
-export class LandingPageComponent implements OnInit {
+export class LandingPageComponent implements OnInit, AfterViewInit {
   isLoginView = true;
-  loginForm: LoginRequest = new LoginRequest();
-  signupForm: SignupRequest = new SignupRequest();
+  loginForm = new LoginRequest();
+  signupForm = new SignupRequest();
   showPassword = false;
   message = '';
   loading = false;
   showEmailExistsModal = false;
 
+  private isBrowser: boolean;
+
   constructor(
     private authService: AuthService,
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) { }
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
+    if (this.isBrowser) {
       this.authService.checkLogin().subscribe({
-        next: () => {
-          this.router.navigate(['/home']);
-        },
-        error: () => {
-          this.initGoogleLogin(); // only init if not already logged in
-        }
+        next: () => this.router.navigate(['/home']),
+        error: () => {} // do nothing if not logged in
       });
+    }
+  }
+
+  ngAfterViewInit(): void {
+    if (this.isBrowser) {
+      // Slight delay ensures DOM is ready
+      setTimeout(() => this.initGoogleLogin(), 50);
     }
   }
 
   toggleView(): void {
     this.isLoginView = !this.isLoginView;
     this.message = '';
+
+    // Ensure Google button is re-rendered if view toggled
+    if (this.isBrowser) {
+      setTimeout(() => this.initGoogleLogin(), 50);
+    }
   }
 
   togglePasswordVisibility(): void {
@@ -56,7 +74,7 @@ export class LandingPageComponent implements OnInit {
   onLoginSubmit(): void {
     this.loading = true;
     this.authService.login(this.loginForm).subscribe({
-      next: (response) => {
+      next: () => {
         this.loading = false;
         this.router.navigate(['/home']);
       },
@@ -88,23 +106,26 @@ export class LandingPageComponent implements OnInit {
   }
 
   private initGoogleLogin(): void {
-    const checkGoogle = () => {
-      if (typeof google !== 'undefined' && google.accounts) {
-        google.accounts.id.initialize({
-          client_id: environment.googleClientId,
-          callback: this.handleCredentialResponse.bind(this),
-        });
+    const el = document.getElementById('google-button');
 
-        google.accounts.id.renderButton(
-          document.getElementById('google-button'),
-          { theme: 'outline', size: 'large' }
-        );
-      } else {
-        setTimeout(checkGoogle, 100);
-      }
-    };
+    if (!el || typeof google === 'undefined' || !google.accounts) {
+      setTimeout(() => this.initGoogleLogin(), 100);
+      return;
+    }
 
-    checkGoogle();
+    el.innerHTML = ''; // Clear existing button before rendering again
+
+    google.accounts.id.initialize({
+      client_id: environment.googleClientId,
+      callback: this.handleCredentialResponse.bind(this),
+    });
+
+    google.accounts.id.renderButton(el, {
+      theme: 'outline',
+      size: 'large',
+    });
+
+    google.accounts.id.prompt(); // Optional
   }
 
   handleCredentialResponse(response: any): void {
@@ -119,6 +140,7 @@ export class LandingPageComponent implements OnInit {
   }
 
   closeModal(): void {
+    this.signupForm = new SignupRequest();
     this.showEmailExistsModal = false;
     this.isLoginView = true;
   }

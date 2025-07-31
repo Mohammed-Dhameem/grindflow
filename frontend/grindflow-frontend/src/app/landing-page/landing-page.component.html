@@ -1,17 +1,24 @@
+<!-- BRAND HEADER -->
+<header class="site-header">
+    <h1 class="brand-name">GRINDFLOW</h1>
+</header>
+
 <div class="container">
     <div class="auth-box">
+        <!-- Title -->
         <h2>{{ isLoginView ? 'Login' : 'Sign Up' }}</h2>
 
         <!-- LOGIN FORM -->
-        <form *ngIf="isLoginView" (ngSubmit)="onLoginSubmit()" novalidate>
-            <input type="email" [(ngModel)]="loginForm.email" name="email" placeholder="Email" required
+        <form *ngIf="isLoginView" #loginFormRef="ngForm" (ngSubmit)="onLoginSubmit()" novalidate>
+            <input type="email" name="email" [(ngModel)]="loginForm.email" placeholder="Email" required
                 autocomplete="email" />
 
             <div class="password-field">
-                <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="loginForm.password" name="password"
+                <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="loginForm.password"
                     placeholder="Password" required autocomplete="current-password" />
-                <button type="button" (click)="togglePasswordVisibility()" class="toggle-btn">
-                    {{ showPassword ? 'Hide' : 'Show' }}
+                <button type="button" class="toggle-btn" (click)="togglePasswordVisibility()"
+                    [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+                    <i [ngClass]="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
                 </button>
             </div>
 
@@ -21,17 +28,18 @@
         </form>
 
         <!-- SIGNUP FORM -->
-        <form *ngIf="!isLoginView" (ngSubmit)="onSignupSubmit()" novalidate>
-            <input type="text" [(ngModel)]="signupForm.name" name="name" placeholder="Full Name" required
+        <form *ngIf="!isLoginView" #signupFormRef="ngForm" (ngSubmit)="onSignupSubmit()" novalidate>
+            <input type="text" name="name" [(ngModel)]="signupForm.name" placeholder="Full Name" required
                 autocomplete="name" />
-            <input type="email" [(ngModel)]="signupForm.email" name="email" placeholder="Email" required
+            <input type="email" name="email" [(ngModel)]="signupForm.email" placeholder="Email" required
                 autocomplete="email" />
 
             <div class="password-field">
-                <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="signupForm.password" name="password"
+                <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="signupForm.password"
                     placeholder="Password" required autocomplete="new-password" />
-                <button type="button" (click)="togglePasswordVisibility()" class="toggle-btn">
-                    {{ showPassword ? 'Hide' : 'Show' }}
+                <button type="button" class="toggle-btn" (click)="togglePasswordVisibility()"
+                    [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+                    <i [ngClass]="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
                 </button>
             </div>
 
@@ -40,31 +48,31 @@
             </button>
         </form>
 
-        <!-- GOOGLE SIGN-IN BUTTON -->
+        <!-- GOOGLE SIGN-IN (Always Rendered) -->
         <div class="google-section">
-            <div id="google-button" class="google-btn"></div>
+            <div id="google-button" class="google-btn" aria-label="Sign in with Google"></div>
         </div>
-
-        <!-- TOGGLE BETWEEN LOGIN/SIGNUP -->
+        
+        <!-- TOGGLE LOGIN/SIGNUP -->
         <div class="toggle-text">
-            <span>
-                {{ isLoginView ? "Don't have an account?" : "Already have an account?" }}
-            </span>
+            <span>{{ isLoginView ? "Don't have an account?" : "Already have an account?" }}</span>
             <a role="button" tabindex="0" (click)="toggleView()">
                 {{ isLoginView ? 'Sign up' : 'Login' }}
             </a>
         </div>
 
-        <!-- FORM ERROR / INFO MESSAGE -->
+        <!-- ERROR OR SUCCESS MESSAGE -->
         <p class="message" *ngIf="message">{{ message }}</p>
     </div>
 
-    <!-- MODAL FOR EMAIL ALREADY REGISTERED -->
-    <div class="modal-backdrop" *ngIf="showEmailExistsModal">
-        <div class="modal-content">
-            <h3>Email already registered</h3>
-            <p>Please log in instead.</p>
-            <button (click)="closeModal()">OK</button>
+    <!-- EMAIL EXISTS MODAL -->
+    <ng-template [ngIf]="showEmailExistsModal">
+        <div class="modal-backdrop" role="dialog" aria-modal="true">
+            <div class="modal-content">
+                <h3>Email already registered</h3>
+                <p>Please log in instead.</p>
+                <button (click)="closeModal()">OK</button>
+            </div>
         </div>
-    </div>
+    </ng-template>
 </div>
