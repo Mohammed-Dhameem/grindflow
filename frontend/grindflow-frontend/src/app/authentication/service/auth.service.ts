@@ -42,4 +42,11 @@ export class AuthService {
     });
   }
 
+  googleLogin(idToken: string): Observable<any> {
+    return this.http.post(`${AppComponent.api_url}/auth/google`, { idToken }, {
+      withCredentials: true,
+      observe: 'response'
+    });
+  }  
+
 }

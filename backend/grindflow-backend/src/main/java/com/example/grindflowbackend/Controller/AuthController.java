@@ -1,10 +1,12 @@
 package com.example.grindflowbackend.Controller;
 
 import com.example.grindflowbackend.Configuration.JwtUtil;
+import com.example.grindflowbackend.Model.Enum.EnumeratedClass;
 import com.example.grindflowbackend.Model.ModelDto.LoginRequest;
 import com.example.grindflowbackend.Model.ModelDto.SignupRequest;
 import com.example.grindflowbackend.Model.User;
 import com.example.grindflowbackend.Repository.UserRepository;
+import com.example.grindflowbackend.Service.GoogleService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,10 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private GoogleService googleService;
+
+
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupRequest req) {
         if (userRepo.findByEmail(req.getEmail()).isPresent()) {
@@ -43,6 +49,7 @@ public class AuthController {
         user.setName(req.getName());
         user.setEmail(req.getEmail());
         user.setPassword(passwordEncoder.encode(req.getPassword()));
+        user.setAuthProvider(EnumeratedClass.AuthProvider.LOCAL);
         userRepo.save(user);
 
         return ResponseEntity
@@ -101,5 +108,45 @@ public class AuthController {
         return ResponseEntity.ok(Collections.singletonMap("message", "Logged out"));
     }
 
+    @PostMapping("/google")
+    public ResponseEntity<?> googleLogin(@RequestBody Map<String, String> body, HttpServletResponse response) {
+        String idToken = body.get("idToken");
+        if (idToken == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Missing ID token"));
+        }
+
+        var payload = googleService.verifyToken(idToken);
+        if (payload == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid ID token"));
+        }
+
+        String email = payload.getEmail();
+        String name = (String) payload.get("name");
+
+        // Lookup or create user
+        User user = userRepo.findByEmail(email).orElseGet(() -> {
+            User newUser = new User();
+            newUser.setEmail(email);
+            newUser.setName(name);
+            newUser.setPassword(""); // Google users may not have local password
+            newUser.setAuthProvider(EnumeratedClass.AuthProvider.GOOGLE);
+            return userRepo.save(newUser);
+        });
+
+        // Generate your JWT
+        String token = jwtUtil.generateToken(email);
+
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", token)
+                .httpOnly(true)
+                .secure(false) // Use true in production
+                .path("/")
+                .maxAge(60 * 60 * 24)
+                .sameSite("Lax")
+                .build();
+
+        response.setHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+
+        return ResponseEntity.ok(Map.of("message", "Google login successful", "email", email));
+    }
 
 }

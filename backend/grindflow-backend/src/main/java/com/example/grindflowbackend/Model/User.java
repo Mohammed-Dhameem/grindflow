@@ -1,5 +1,6 @@
 package com.example.grindflowbackend.Model;
 
+import com.example.grindflowbackend.Model.Enum.EnumeratedClass;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,4 +18,7 @@ public class User {
     private String email;
 
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    private EnumeratedClass.AuthProvider authProvider;
 }
