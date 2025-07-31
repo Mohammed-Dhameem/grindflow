@@ -61,12 +61,21 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest req, HttpServletResponse response) {
         return userRepo.findByEmail(req.getEmail())
                 .map(user -> {
+                    // Check if user registered using a different provider
+                    if (user.getAuthProvider() != EnumeratedClass.AuthProvider.LOCAL) {
+                        String providerName = user.getAuthProvider().name(); // GOOGLE, FACEBOOK, etc.
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                .body(Collections.singletonMap("error",
+                                        "You have previously signed in using " + providerName + ". Please continue with that platform."));
+                    }
+
+                    // Normal LOCAL login with password
                     if (passwordEncoder.matches(req.getPassword(), user.getPassword())) {
                         String token = jwtUtil.generateToken(user.getEmail());
 
                         ResponseCookie jwtCookie = ResponseCookie.from("jwt", token)
                                 .httpOnly(true)
-                                .secure(false) // ❗Set to true in production (HTTPS only)
+                                .secure(false) // ✅ true in prod
                                 .path("/")
                                 .maxAge(60 * 60 * 24) // 1 day
                                 .sameSite("Lax")

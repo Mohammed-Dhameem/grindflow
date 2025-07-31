@@ -45,7 +45,7 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
     if (this.isBrowser) {
       this.authService.checkLogin().subscribe({
         next: () => this.router.navigate(['/home']),
-        error: () => {} // do nothing if not logged in
+        error: () => { } // do nothing if not logged in
       });
     }
   }
@@ -73,14 +73,23 @@ export class LandingPageComponent implements OnInit, AfterViewInit {
 
   onLoginSubmit(): void {
     this.loading = true;
+    this.message = '';
+
     this.authService.login(this.loginForm).subscribe({
       next: () => {
         this.loading = false;
         this.router.navigate(['/home']);
       },
-      error: (err) => {
+      error: ({ status, error }) => {
         this.loading = false;
-        this.message = err.error?.error || 'Invalid email or password';
+
+        if (status === 403) {
+          this.message = error?.error || 'You have previously logged in using a different platform.';
+        } else if (status === 401) {
+          this.message = 'Invalid email or password.';
+        } else {
+          this.message = 'An unexpected error occurred. Please try again later.';
+        }
       }
     });
   }
