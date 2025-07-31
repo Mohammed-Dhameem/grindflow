@@ -10,5 +10,4 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'Grindflow';
-  static api_url = "http://localhost:8080/api";
 }

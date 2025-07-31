@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { SignupRequest } from '../model/signup-request';
 import { LoginRequest } from '../model/login-request';
 import { AppComponent } from '../../app.component';
+import { environment } from '../environment/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -12,7 +13,7 @@ export class AuthService {
 
   signup(data: SignupRequest): Observable<HttpResponse<any>> {
     return this.http.post<any>(
-      `${AppComponent.api_url}/auth/signup`,
+      `${environment.api_url}/auth/signup`,
       data,
       { observe: 'response', withCredentials: true }
     );
@@ -20,7 +21,7 @@ export class AuthService {
 
   login(data: LoginRequest): Observable<HttpResponse<any>> {
     return this.http.post<any>(
-      `${AppComponent.api_url}/auth/login`,
+      `${environment.api_url}/auth/login`,
       data,
       { observe: 'response', withCredentials: true }
     );
@@ -28,7 +29,7 @@ export class AuthService {
 
   checkLogin(): Observable<any> {
     return this.http.get(
-      `${AppComponent.api_url}/auth/protected`,
+      `${environment.api_url}/auth/protected`,
       {
         withCredentials: true,
         observe: 'response'
@@ -37,13 +38,13 @@ export class AuthService {
   }
 
   logout(): Observable<any> {
-    return this.http.post(`${AppComponent.api_url}/auth/logout`, {}, {
+    return this.http.post(`${environment.api_url}/auth/logout`, {}, {
       withCredentials: true
     });
   }
 
   googleLogin(idToken: string): Observable<any> {
-    return this.http.post(`${AppComponent.api_url}/auth/google`, { idToken }, {
+    return this.http.post(`${environment.api_url}/auth/google`, { idToken }, {
       withCredentials: true,
       observe: 'response'
     });
