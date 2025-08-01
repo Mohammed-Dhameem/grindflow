@@ -1,0 +1,84 @@
+<div class="screenfix">
+    <div class="landing-container" @fadeSlide>
+        <!-- Hero Section -->
+        <div class="hero">
+            <div *ngIf="!showFeatures" @fadeSlide>
+                <h1 class="brand-title">Grindflow</h1>
+                <p class="tagline">Streamline your goals, one task at a time.</p>
+            </div>
+
+            <div class="button-group">
+                <div class="button-column">
+                    <button mat-raised-button color="primary" routerLink="/auth">
+                        Login / Signup
+                    </button>
+                    <button mat-flat-button="accent" routerLink="/home">
+                        Go to Dashboard
+                    </button>
+                </div>
+                <div class="button-column">
+                    <button mat-stroked-button class="hover-button" (click)="showFeatures = !showFeatures" @fade>
+                        {{showFeatures? 'Hide Features' : 'Show Features' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="hover-wrapper">
+            <div class="feature-popup" *ngIf="showFeatures" @fadeSlide>
+                <h3>Grindflow Features</h3>
+                <mat-list dense>
+                    <mat-list-item class="feature-item">
+                        <span class="feature-text">
+                            <mat-icon inline color="accent">emoji_events</mat-icon>
+                            Gamified task completion with points
+                        </span>
+                    </mat-list-item>
+                    <mat-list-item class="feature-item">
+                        <span class="feature-text">
+                            <mat-icon inline color="accent">leaderboard</mat-icon>
+                            Personal and global ranking system
+                        </span>
+                    </mat-list-item>
+                    <mat-list-item class="feature-item">
+                        <span class="feature-text">
+                            <mat-icon inline color="accent">alt_route</mat-icon>
+                            Goal-oriented roadmaps with tracking
+                        </span>
+                    </mat-list-item>
+                    <mat-list-item class="feature-item">
+                        <span class="feature-text">
+                            <mat-icon inline color="accent">timer</mat-icon>
+                            Daily streaks and productivity metrics
+                        </span>
+                    </mat-list-item>
+                    <mat-list-item class="feature-item">
+                        <span class="feature-text">
+                            <mat-icon inline color="accent">event</mat-icon>
+                            Smart scheduling and calendar integration
+                        </span>
+                    </mat-list-item>
+                    <mat-list-item class="feature-item">
+                        <span class="feature-text">
+                            <mat-icon inline color="accent">lightbulb</mat-icon>
+                            Curated learning & habit-building paths
+                        </span>
+                    </mat-list-item>
+                    <mat-list-item class="feature-item">
+                        <span class="feature-text">
+                            <mat-icon inline color="accent">notifications_active</mat-icon>
+                            Smart reminders and nudges
+                        </span>
+                    </mat-list-item>
+                    <mat-list-item class="feature-item">
+                        <span class="feature-text">
+                            <mat-icon inline color="accent">category</mat-icon>
+                            Custom categories and task tagging
+                        </span>
+                    </mat-list-item>
+                </mat-list>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -70,6 +70,8 @@ grindflow/
 
 ## Screenshots
 
+file:///home/dhameem/Pictures/Screenshots/grindflow-landing.jpg
+
 ![grindflow-login](https://github.com/user-attachments/assets/881a5c10-579b-429e-ad0a-3797f02b7bb3)
 
 ![grindflow-signup](https://github.com/user-attachments/assets/3c028833-7072-474d-9eab-8520633fb1ca)
