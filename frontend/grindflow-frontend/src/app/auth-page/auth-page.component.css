@@ -1,0 +1,277 @@
+/* ------------------- Layout ------------------- */
+/* Always keep layout stable */
+html, body {
+  scrollbar-gutter: stable;
+  overflow-y: auto;
+}
+
+/* Temporary scrollbar hide during transitions */
+.container.transitioning {
+  overflow-y: hidden !important;
+}
+
+.screenfix {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #121212;
+  font-family: 'Segoe UI', sans-serif;
+  color: #f1f1f1;
+  overflow: hidden;
+}
+
+.container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+@media (max-height: 650px) {
+  .container {
+    align-items: flex-start;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .auth-box { 
+    margin-top: 0;
+    margin-bottom: 2rem;
+  }
+}
+
+/* ------------------- Header ------------------- */
+.site-header {
+  text-align: center;
+  padding: 3px;
+  background: linear-gradient(135deg, rgba(124, 77, 255, 0.8), rgba(156, 39, 176, 0.8));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff;
+  box-shadow: 0 0 24px rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  transition: box-shadow 0.3s ease;
+}
+
+.site-header:hover {
+  box-shadow: 0 0 36px rgba(255, 255, 255, 0.15);
+}
+
+.brand-name {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* ------------------- Auth Box ------------------- */
+.auth-box {
+  width: 100%;
+  max-width: 420px;
+  padding: 1rem;
+  border-radius: 20px;
+  background: rgba(30, 30, 47, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 24px rgba(255, 255, 255, 0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+.auth-box:hover {
+  box-shadow: 0 0 32px rgba(255, 255, 255, 0.12);
+}
+
+.auth-box h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.1);
+}
+
+/* ------------------- Welcome Text ------------------- */
+.welcome-inline {
+  text-align: center;
+  margin-bottom: 1rem;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.welcome-inline h3 {
+  font-size: 1.4rem;
+  margin: 0;
+  color: #ffffff;
+}
+
+.brand-highlight {
+  color: #f06292;
+  font-weight: bold;
+}
+
+.welcome-sub {
+  font-size: 0.9rem;
+  color: #cccccc;
+  margin-top: 0.3rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ------------------- Google Section ------------------- */
+.google-section {
+  text-align: center;
+  margin: 0.8rem 0;
+}
+
+.google-btn {
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+/* ------------------- Password Strength ------------------- */
+.password-strength {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.strength-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background-color: #333;
+}
+
+.strength-bar.weak {
+  background-color: #ef5350;
+}
+
+.strength-bar.medium {
+  background-color: #ffb74d;
+}
+
+.strength-bar.strong {
+  background-color: #66bb6a;
+}
+
+.strength-label {
+  font-size: 0.85rem;
+  color: #ccc;
+}
+
+/* ------------------- Form and Fields ------------------- */
+.full-width {
+  width: 100%;
+  margin-bottom: 0.6rem;
+}
+
+/* Angular Material Overrides for Dark Mode */
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-flex {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 0.15rem 0.6rem;
+}
+
+::ng-deep .mat-input-element {
+  color: #ffffff !important;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.2 !important;
+}
+
+::ng-deep .mat-form-field-label {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 0.9rem;
+}
+
+::ng-deep .mat-input-element::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-style: italic;
+}
+
+::ng-deep .mat-error {
+  color: #ff6b81 !important;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+::ng-deep .mat-icon {
+  color: #e0e0e0;
+}
+
+/* ------------------- Toggle Link ------------------- */
+.toggle-text {
+  text-align: center;
+  margin-top: 0.8rem;
+  font-size: 0.95rem;
+  color: #bbb;
+}
+
+.toggle-text a {
+  color: #ba68c8;
+  font-weight: 500;
+  margin-left: 4px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.toggle-text a:hover {
+  text-decoration: underline;
+}
+
+/* ------------------- Feedback ------------------- */
+.message {
+  margin-top: 1rem;
+  text-align: center;
+  color: #ef5350;
+}
+
+/* ------------------- Modal ------------------- */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #2c2c3d;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  color: #f1f1f1;
+}
+
+.modal-content h3 {
+  margin-bottom: 0.5rem;
+  color: #ff6b81;
+}
+
+.modal-content p {
+  margin-bottom: 1.5rem;
+  color: #bbb;
+}
