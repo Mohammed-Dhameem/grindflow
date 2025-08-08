@@ -11,13 +11,15 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendMail() {
+    String from = "grindflow.webapp@gmail.com";
+
+    public void sendTestMail() {
         SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo();
+        message.setFrom(from);
+        message.setTo("nmaldhameem115@gmail.com");
 //        message.setCc();
-//        message.setSubject();
-//        message.setText();
-//        message.setFrom();
+        message.setSubject("Test mail");
+        message.setText("Test mail from grindflow");
 
         mailSender.send(message);
     }

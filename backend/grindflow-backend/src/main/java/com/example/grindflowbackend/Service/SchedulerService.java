@@ -11,9 +11,9 @@ public class SchedulerService {
     private EmailService emailService;
 
     //    @Scheduled(cron = "0 50 20 * * ?") // Every day at 8:45 PM
-    @Scheduled(cron = "0 * * * * ?")
+//    @Scheduled(cron = "0 * * * * ?")
     public void sendTestMail() {
-        emailService.sendMail();
+        emailService.sendTestMail();
         System.out.println("Test mail sent at: " + java.time.LocalDateTime.now());
     }
 }

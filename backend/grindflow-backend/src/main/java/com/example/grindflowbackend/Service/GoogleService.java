@@ -11,7 +11,7 @@ import java.util.Collections;
 @Service
 public class GoogleService {
 
-    private static final String CLIENT_ID = "980612145502-f2bn0sq2kqqh4ne6jchvtp1nsfpggfud.apps.googleusercontent.com";
+    private static final String CLIENT_ID = "718276703404-gu5u19ljjg251ue78gggd8l50mb039fv.apps.googleusercontent.com";
 
     public GoogleIdToken.Payload verifyToken(String idTokenString) {
         try {
