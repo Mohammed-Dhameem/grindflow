@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, PLATFORM_ID, AfterViewInit} from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID, AfterViewInit, ViewChild } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -26,11 +26,10 @@ declare const google: any;
     MatButtonModule,
   ],
   templateUrl: './auth-page.component.html',
-  styleUrl: './auth-page.component.css',
+  styleUrls: ['./auth-page.component.css'],
   animations: [fade],
-
 })
-export class AuthPageComponent  implements OnInit, AfterViewInit{
+export class AuthPageComponent implements OnInit, AfterViewInit {
   isLoginView = true;
   loginForm = new LoginRequest();
   signupForm = new SignupRequest();
@@ -42,8 +41,15 @@ export class AuthPageComponent  implements OnInit, AfterViewInit{
   passwordStrength = '';
   passwordStrengthLabel = '';
   isPasswordStrongEnough = false;
+  passwordTyped: boolean = false;
+
+  @ViewChild('signupFormRef') signupFormRef!: NgForm;
+
 
   private isBrowser: boolean;
+  private googleInitRetryCount = 0;
+  private readonly maxGoogleInitRetry = 20;
+  private isGoogleInitialized = false;
 
   constructor(
     private authService: AuthService,
@@ -57,7 +63,7 @@ export class AuthPageComponent  implements OnInit, AfterViewInit{
     if (this.isBrowser) {
       this.authService.checkLogin().subscribe({
         next: () => this.router.navigate(['/home']),
-        error: () => { }
+        error: () => { },
       });
     }
   }
@@ -71,8 +77,11 @@ export class AuthPageComponent  implements OnInit, AfterViewInit{
   toggleView(): void {
     this.isLoginView = !this.isLoginView;
     this.message = '';
-    if (this.isBrowser) {
-      setTimeout(() => this.initGoogleLogin(), 50);
+    if (this.isBrowser && !this.isGoogleInitialized) {
+      setTimeout(() => {
+        this.initGoogleLogin();
+        this.isGoogleInitialized = true;
+      }, 50);
     }
   }
 
@@ -103,7 +112,7 @@ export class AuthPageComponent  implements OnInit, AfterViewInit{
         } else {
           this.message = 'An unexpected error occurred. Please try again later.';
         }
-      }
+      },
     });
   }
 
@@ -119,6 +128,8 @@ export class AuthPageComponent  implements OnInit, AfterViewInit{
     }
 
     this.loading = true;
+    this.message = '';
+
     this.authService.signup(this.signupForm).subscribe({
       next: () => {
         this.loading = false;
@@ -133,16 +144,22 @@ export class AuthPageComponent  implements OnInit, AfterViewInit{
         } else {
           this.message = errMsg || 'Signup failed.';
         }
-      }
+      },
     });
   }
 
   private initGoogleLogin(): void {
     const el = document.getElementById('googleBtn');
     if (!el || typeof google === 'undefined' || !google.accounts) {
+      if (this.googleInitRetryCount >= this.maxGoogleInitRetry) {
+        console.warn('Google SDK failed to load.');
+        return;
+      }
+      this.googleInitRetryCount++;
       setTimeout(() => this.initGoogleLogin(), 100);
       return;
     }
+    this.googleInitRetryCount = 0;
 
     el.innerHTML = ''; // clear existing render
     google.accounts.id.initialize({
@@ -151,35 +168,47 @@ export class AuthPageComponent  implements OnInit, AfterViewInit{
     });
 
     google.accounts.id.renderButton(el, {
-      theme: "filled_black",
-      size: "large",
-      type: "standard",
-      shape: "pill",
-      logo_alignment: "left"
+      theme: 'filled_black',
+      size: 'large',
+      type: 'standard',
+      shape: 'pill',
+      logo_alignment: 'left',
     });
 
     google.accounts.id.prompt(); // Optional, shows one-tap
   }
 
-
   handleCredentialResponse(response: any): void {
+    if (!response || !response.credential) {
+      this.message = 'Google login failed: no credential received.';
+      return;
+    }
     const idToken = response.credential;
     this.authService.googleLogin(idToken).subscribe({
       next: () => this.router.navigate(['/home']),
       error: (err) => {
         this.message = 'Google login failed';
         console.error(err);
-      }
+      },
     });
   }
 
-  closeModal(): void {
-    this.signupForm = new SignupRequest();
+  closeModal(form?: NgForm): void {
+    if (form) {
+      form.resetForm();
+    } else {
+      this.signupForm.name = '';
+      this.signupForm.email = '';
+      this.signupForm.password = '';
+      this.signupForm.confirmPassword = '';
+    }
     this.showEmailExistsModal = false;
     this.isLoginView = true;
+    this.message = '';
   }
 
   checkPasswordStrength(password: string): void {
+    this.passwordTyped = password.length > 0;
     const hasUpper = /[A-Z]/.test(password);
     const hasNumber = /\d/.test(password);
     const hasSpecial = /[@$!%*?&]/.test(password);
@@ -205,5 +234,12 @@ export class AuthPageComponent  implements OnInit, AfterViewInit{
     }
 
     this.isPasswordStrongEnough = this.passwordStrength === 'strong';
+  }
+
+  passwordsMatch(): boolean {
+    if (!this.signupForm.password || !this.signupForm.confirmPassword) {
+      return true; // prevent early mismatch error
+    }
+    return this.signupForm.password === this.signupForm.confirmPassword;
   }
 }
