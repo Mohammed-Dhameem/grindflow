@@ -1,7 +1,6 @@
 package com.example.grindflowbackend.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,6 +13,5 @@ public class SchedulerService {
 //    @Scheduled(cron = "0 * * * * ?")
     public void sendTestMail() {
         emailService.sendTestMail();
-        System.out.println("Test mail sent at: " + java.time.LocalDateTime.now());
     }
 }

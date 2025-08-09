@@ -36,8 +36,6 @@ public class EmailService {
         message.setSubject(subject);
         message.setText(body);
         mailSender.send(message);
-
-        System.out.printf("Simulated email to %s:\nSubject: %s\n%s%n", to, subject, body);
     }
 
 }
