@@ -23,5 +23,22 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    public void sendOtpEmail(String to, String name, String otp) {
+
+        String subject = "Your verification code";
+        String greeting = (name != null && !name.isBlank()) ? ("Hi " + name + ",") : "Hi,";
+        String body = greeting + "\n\nYour OTP is: " + otp + "\nThis code expires in 5 minutes.\n\nIf you didn’t request this, ignore this email.";
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(from);
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+        mailSender.send(message);
+
+        System.out.printf("Simulated email to %s:\nSubject: %s\n%s%n", to, subject, body);
+    }
+
 }
 

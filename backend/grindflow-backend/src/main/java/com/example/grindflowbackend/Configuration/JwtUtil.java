@@ -13,11 +13,11 @@ public class JwtUtil {
     private final String SECRET = "your-256-bit-secret-your-256-bit-secret"; // 32+ chars
     private final Key signingKey = Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    public String generateToken(String email) {
+    public String generateTokenWithExpiry(String email, long seconds) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1 day
+                .setExpiration(new Date(System.currentTimeMillis() + seconds)) // 1 day
                 .signWith(signingKey, SignatureAlgorithm.HS256)
                 .compact();
     }

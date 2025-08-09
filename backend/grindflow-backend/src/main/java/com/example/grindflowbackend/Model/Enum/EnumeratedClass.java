@@ -7,4 +7,8 @@ public class EnumeratedClass {
         GOOGLE,
         FACEBOOK
     }
+
+    public enum OtpStatus {
+        VALID, EXPIRED, INVALID
+    }
 }

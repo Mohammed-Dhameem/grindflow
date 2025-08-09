@@ -1,5 +1,6 @@
 package com.example.grindflowbackend.Configuration;
 
+import com.example.grindflowbackend.Service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -13,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -29,24 +31,40 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // 🔍 Get 'jwt' cookie
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            Arrays.stream(cookies)
-                    .filter(cookie -> "jwt".equals(cookie.getName()))
-                    .findFirst()
-                    .ifPresent(jwtCookie -> {
-                        String token = jwtCookie.getValue();
-                        if (jwtUtil.isTokenValid(token)) {
-                            String email = jwtUtil.extractEmail(token);
+        // Only try to authenticate if no authentication is already present
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                            UsernamePasswordAuthenticationToken auth =
-                                    new UsernamePasswordAuthenticationToken(email, null, null);
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                Arrays.stream(cookies)
+                        .filter(cookie ->
+                                "jwt".equals(cookie.getName()) ||
+                                        "reset_jwt".equals(cookie.getName())
+                        )
+                        .findFirst()
+                        .ifPresent(jwtCookie -> {
+                            String token = jwtCookie.getValue();
+                            try {
+                                if (jwtUtil.isTokenValid(token)) {
+                                    String email = jwtUtil.extractEmail(token);
 
-                            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                            SecurityContextHolder.getContext().setAuthentication(auth);
-                        }
-                    });
+                                    // No authorities — just pass empty list
+                                    UsernamePasswordAuthenticationToken auth =
+                                            new UsernamePasswordAuthenticationToken(
+                                                    email,
+                                                    null,
+                                                    Collections.emptyList()
+                                            );
+
+                                    auth.setDetails(new WebAuthenticationDetailsSource()
+                                            .buildDetails(request));
+                                    SecurityContextHolder.getContext().setAuthentication(auth);
+                                }
+                            } catch (Exception e) {
+                                // Optional: log invalid token
+                            }
+                        });
+            }
         }
 
         filterChain.doFilter(request, response);

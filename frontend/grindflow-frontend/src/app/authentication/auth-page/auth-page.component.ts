@@ -6,11 +6,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { AuthService } from '../authentication/service/auth.service';
-import { LoginRequest } from '../authentication/model/login-request';
-import { SignupRequest } from '../authentication/model/signup-request';
-import { environment } from '../authentication/environment/environment';
-import { fade } from '../animations/animations';
+import { AuthService } from '../service/auth.service';
+import { LoginRequest } from '../model/login-request';
+import { SignupRequest } from '../model/signup-request';
+import { environment } from '../environment/environment';
+import { fade } from '../../animations/animations';
 
 declare const google: any;
 
@@ -241,5 +241,9 @@ export class AuthPageComponent implements OnInit, AfterViewInit {
       return true; // prevent early mismatch error
     }
     return this.signupForm.password === this.signupForm.confirmPassword;
+  }
+
+  routeToForgotPassword(): void {
+    this.router.navigate(['/forgot-password']);
   }
 }

@@ -85,7 +85,6 @@
                 </mat-form-field>
 
                 <!-- Password Strength Meter -->
-                <!-- Password Strength Meter -->
                 <div class="password-strength" *ngIf="passwordTyped">
                     <div class="strength-bar" [ngClass]="passwordStrength"></div>
                     <span class="strength-label">{{ passwordStrengthLabel }}</span>
@@ -104,6 +103,11 @@
         </section>
 
         <!-- View Toggle -->
+        <footer class="toggle-footer" *ngIf="isLoginView">
+            <span>{{ "Forgot Password?" }}</span>
+            <a role="button" tabindex="0" (click)="routeToForgotPassword()">{{ 'Click Here' }}</a>
+        </footer>
+
         <footer class="toggle-footer">
             <span>{{ isLoginView ? "Don't have an account?" : "Already have an account?" }}</span>
             <a role="button" tabindex="0" (click)="toggleView()">{{ isLoginView ? 'Sign up' : 'Login' }}</a>

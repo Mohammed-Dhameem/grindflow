@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { SignupRequest } from '../model/signup-request';
 import { LoginRequest } from '../model/login-request';
 import { environment } from '../environment/environment';
+import { EmailVerification } from '../model/email-verification';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -47,6 +48,21 @@ export class AuthService {
       withCredentials: true,
       observe: 'response'
     });
-  }  
+  }
 
+  verifyAndSendOTP(email: string): Observable<HttpResponse<any>> {
+    return this.http.post(
+      `${environment.api_url}/auth/verifyAndSendOTP`,
+      { email },
+      { observe: 'response', withCredentials: true } // important
+    );
+  }
+
+  verifyOTP(payload: EmailVerification): Observable<HttpResponse<any>>  {
+    return this.http.post(
+      `${environment.api_url}/auth/verifyOTP`,
+      payload,
+      { observe: 'response', withCredentials: true } // important
+    );
+  }
 }
