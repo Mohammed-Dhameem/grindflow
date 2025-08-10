@@ -27,7 +27,7 @@ export const routes: Routes = [
   {
     path: 'reset-password',
     component: ResetPasswordComponent,
-    canActivate: [ForgotPasswordGuard]
+    // canActivate: [ForgotPasswordGuard]
   },
   {
     path: '**',

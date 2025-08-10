@@ -61,7 +61,7 @@ export class ForgotPasswordComponent {
           this.loading = false;
           this.message = res?.body?.message || 'OTP verified successfully!';
 
-          // No token reading — HttpOnly cookie already set by backend
+          sessionStorage.setItem('resetEmail', this.verifyForm.email!);
           this.router.navigate(['/reset-password']);
 
           form.resetForm();
