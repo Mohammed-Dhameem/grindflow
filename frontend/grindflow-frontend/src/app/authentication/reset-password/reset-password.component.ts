@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { AuthService } from '../service/auth.service';
+import { error } from 'console';
 
 @Component({
   selector: 'app-reset-password',
@@ -21,6 +23,10 @@ import { MatInputModule } from '@angular/material/input';
   styleUrl: './reset-password.component.css'
 })
 export class ResetPasswordComponent {
+
+  constructor(
+    private authService: AuthService
+  ) {}
 
   resetForm = new PasswordReset();
 
@@ -75,6 +81,14 @@ export class ResetPasswordComponent {
       // Call reset API here
 
       console.log(this.resetForm);
+      this.authService.resetPassword(this.resetForm).subscribe({
+        next: (res) => {
+          console.log(res);
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      })
       // setTimeout(() => {
       //   this.loading = false;
       //   this.message = 'Password updated successfully ✅';

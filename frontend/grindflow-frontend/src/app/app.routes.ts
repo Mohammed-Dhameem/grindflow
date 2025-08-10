@@ -19,6 +19,7 @@ export const routes: Routes = [
   {
     path: 'home',
     component: HomePageComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'forgot-password',
@@ -27,7 +28,7 @@ export const routes: Routes = [
   {
     path: 'reset-password',
     component: ResetPasswordComponent,
-    // canActivate: [ForgotPasswordGuard]
+    canActivate: [ForgotPasswordGuard]
   },
   {
     path: '**',

@@ -4,6 +4,7 @@ import com.example.grindflowbackend.Configuration.JwtUtil;
 import com.example.grindflowbackend.Model.Enum.EnumeratedClass;
 import com.example.grindflowbackend.Model.ModelDto.EmailVerification;
 import com.example.grindflowbackend.Model.ModelDto.LoginRequest;
+import com.example.grindflowbackend.Model.ModelDto.PasswordReset;
 import com.example.grindflowbackend.Model.ModelDto.SignupRequest;
 import com.example.grindflowbackend.Model.User;
 import com.example.grindflowbackend.Repository.UserRepository;
@@ -210,8 +211,30 @@ public class AuthController {
         };
     }
 
+    @PostMapping("/resetPassword")
+    public ResponseEntity<?> resetPassword(
+            @CookieValue(value = "reset_jwt", required = false) String token,
+            @RequestBody PasswordReset req) {
+
+        if (token == null || !jwtUtil.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Invalid or missing reset token"));
+        }
+
+        String email = jwtUtil.extractEmail(token);
+        System.out.println("Resetting password for: " + email);
+        System.out.println(req);
+
+        // TODO: Actually update the user's password in DB here
+
+        return ResponseEntity.ok(Map.of("message", "Password reset successful"));
+    }
+
+
     @GetMapping("/checkResetToken")
-    public ResponseEntity<?> checkResetToken(@CookieValue(value = "reset_jwt", required = false) String token) {
+    public ResponseEntity<?> checkResetToken(
+            @CookieValue(value = "reset_jwt", required = false) String token,
+            HttpServletResponse response) {
         if (token == null || !jwtUtil.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Invalid or missing reset token"));
